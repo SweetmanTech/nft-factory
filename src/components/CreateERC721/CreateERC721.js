@@ -4,10 +4,12 @@ import { useAccount } from "wagmi";
 import ButtonCreateERC721 from "../ButtonCreateERC721";
 
 const CreateERC721 = ({ onDeployed }) => {
-  const { data: account } = useAccount();
+  const { data: account, isLoading } = useAccount({
+    suspense: true,
+  });
   const [name, setName] = useState("My ERC721");
   const [symbol, setSymbol] = useState("SMBL");
-
+  console.log("ACCOUNT", account?.address);
   return (
     <Box
       sx={{
@@ -20,13 +22,11 @@ const CreateERC721 = ({ onDeployed }) => {
         value={name}
         label="ERC721 Contract Name"
         onChange={(e) => setName(e.target.value)}
-        disabled={!account?.address}
       />
       <TextField
         value={symbol}
         label="ERC721 Contract Symbol"
         onChange={(e) => setSymbol(e.target.value)}
-        disabled={!account?.address}
       />
       <ButtonCreateERC721 onDeployed={onDeployed} name={name} symbol={symbol} />
     </Box>

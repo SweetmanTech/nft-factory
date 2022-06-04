@@ -5,13 +5,18 @@ import abi from "./abi.json";
 import bytecode from "./bytecode.json";
 import PendingTxModal from "../PendingTxModal";
 import { useSigner, useAccount } from "wagmi";
+import { toast } from "react-toastify";
 
 const ButtonCreateERC721 = ({ onDeployed, name, symbol }) => {
   const { data: signer } = useSigner();
-  const { data } = useAccount();
+  const { data: account } = useAccount();
   const [pendingTx, setPendingTx] = useState(false);
 
   const deployContract = async () => {
+    if (!account?.address) {
+      toast.error("please connect wallet");
+      return;
+    }
     setPendingTx("Sign transaction deploying ERC721 smart contract.");
 
     // Deploy the contract
@@ -43,7 +48,7 @@ const ButtonCreateERC721 = ({ onDeployed, name, symbol }) => {
         <Button
           variant="contained"
           onClick={handleButtonClick}
-          disabled={pendingTx || !data?.account}
+          disabled={pendingTx}
         >
           Create Smart Contract
         </Button>
