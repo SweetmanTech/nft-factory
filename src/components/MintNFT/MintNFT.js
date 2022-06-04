@@ -1,24 +1,27 @@
 import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useConnectWallet } from "@web3-onboard/react";
 import { ethers } from "ethers";
 import { useMemo, useState } from "react";
 import abi from "../ButtonCreateERC721/abi.json";
 import PendingTxModal from "../PendingTxModal";
 import ConfirmedTxModal from "../ConfirmedTxModal";
-import etherscanService from "../../utils/etherscanService";
+import { getAddressLink } from "../../utils/etherscanService";
+import { useSigner } from "wagmi";
+import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 
 const MintNFT = ({ contractAddress }) => {
-  const [{ wallet }] = useConnectWallet();
-  const [recipient, setRecipient] = useState(wallet?.accounts?.[0]?.address);
+  const { data: signer } = useSigner();
+  const { activeChain } = useNetwork();
+  const { data: account } = useAccount();
+  console.log("useAccount", account);
+  const [recipient, setRecipient] = useState(account?.address);
   const [tokenURI, setTokenURI] = useState(
     "ipfs://QmZMaWmwKCgmQLm6WUm7HXt9QNXgSzDKN7quFwnf4nv5QV"
   );
   const [tokenId, setTokenId] = useState();
   const [pendingTx, setPendingTx] = useState();
 
-  const provider = new ethers.providers.Web3Provider(wallet?.provider);
-  const signer = provider.getSigner();
   const contract = useMemo(
     () =>
       contractAddress
@@ -28,16 +31,12 @@ const MintNFT = ({ contractAddress }) => {
   );
 
   const contractBlockscanAddress = useMemo(
-    () => etherscanService.getAddressLink(wallet.chains[0].id, contractAddress),
-    [contractAddress]
+    () => getAddressLink(activeChain, contractAddress),
+    [activeChain, contractAddress]
   );
   const ownerBlockscanAddress = useMemo(
-    () =>
-      etherscanService.getAddressLink(
-        wallet.chains[0].id,
-        wallet?.accounts?.[0]?.address
-      ),
-    [wallet]
+    () => getAddressLink(activeChain, account?.address),
+    [activeChain, account]
   );
 
   const handleReceipt = (receipt) => {

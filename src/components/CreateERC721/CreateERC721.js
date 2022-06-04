@@ -1,10 +1,10 @@
 import { Box, TextField } from "@mui/material";
-import { useConnectWallet } from "@web3-onboard/react";
 import { useState } from "react";
+import { useAccount } from "wagmi";
 import ButtonCreateERC721 from "../ButtonCreateERC721";
 
 const CreateERC721 = ({ onDeployed }) => {
-  const [{ wallet }] = useConnectWallet();
+  const { data: account, isLoading } = useAccount();
   const [name, setName] = useState("My ERC721");
   const [symbol, setSymbol] = useState("SMBL");
 
@@ -16,20 +16,18 @@ const CreateERC721 = ({ onDeployed }) => {
       }}
       gap={3}
     >
-      {wallet && (
-        <>
-          <TextField
-            value={name}
-            label="ERC721 Contract Name"
-            onChange={(e) => setName(e.target.value)}
-          />
-          <TextField
-            value={symbol}
-            label="ERC721 Contract Symbol"
-            onChange={(e) => setSymbol(e.target.value)}
-          />
-        </>
-      )}
+      <TextField
+        value={name}
+        label="ERC721 Contract Name"
+        onChange={(e) => setName(e.target.value)}
+        disabled={!account?.address}
+      />
+      <TextField
+        value={symbol}
+        label="ERC721 Contract Symbol"
+        onChange={(e) => setSymbol(e.target.value)}
+        disabled={!account?.address}
+      />
       <ButtonCreateERC721 onDeployed={onDeployed} name={name} symbol={symbol} />
     </Box>
   );
