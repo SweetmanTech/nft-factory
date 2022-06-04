@@ -1,24 +1,23 @@
 import { useState } from "react";
 import { Button, CircularProgress } from "@mui/material";
-import { useConnectWallet } from "@web3-onboard/react";
 import { ContractFactory, ethers } from "ethers";
 import abi from "./abi.json";
 import bytecode from "./bytecode.json";
 import PendingTxModal from "../PendingTxModal";
+import { useSigner, useAccount } from "wagmi";
+import { toast } from "react-toastify";
 
 const ButtonCreateERC721 = ({ onDeployed, name, symbol }) => {
-  const [{ wallet }, connect] = useConnectWallet();
+  const { data: signer } = useSigner();
+  const { data: account } = useAccount();
   const [pendingTx, setPendingTx] = useState(false);
 
   const deployContract = async () => {
-    if (!wallet) {
-      connect();
+    if (!account?.address) {
+      toast.error("please connect wallet");
       return;
     }
     setPendingTx("Sign transaction deploying ERC721 smart contract.");
-
-    const provider = new ethers.providers.Web3Provider(wallet?.provider);
-    const signer = provider.getSigner();
 
     // Deploy the contract
     const factory = new ContractFactory(abi, bytecode, signer);
@@ -51,7 +50,7 @@ const ButtonCreateERC721 = ({ onDeployed, name, symbol }) => {
           onClick={handleButtonClick}
           disabled={pendingTx}
         >
-          {wallet ? "Create Smart Contract" : "Connect Wallet"}
+          Create Smart Contract
         </Button>
       )}
       <PendingTxModal pendingTx={pendingTx} />

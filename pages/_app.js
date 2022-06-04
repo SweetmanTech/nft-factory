@@ -1,52 +1,39 @@
 import "../styles/globals.css";
-import { init } from "@web3-onboard/react";
-import injectedModule from "@web3-onboard/injected-wallets";
-import walletConnectModule from "@web3-onboard/walletconnect";
-
-const walletConnect = walletConnectModule();
-const injected = injectedModule();
-
-init({
-  wallets: [injected, walletConnect],
-  chains: [
-    {
-      id: "0x1",
-      token: "ETH",
-      label: "Ethereum Mainnet",
-      rpcUrl: "https://mainnet.infura.io/v3/ababf9851fd845d0a167825f97eeb12b",
-    },
-    {
-      id: "0x4",
-      token: "rETH",
-      label: "Ethereum Rinkeby Testnet",
-      rpcUrl: "https://rinkeby.infura.io/v3/ababf9851fd845d0a167825f97eeb12b",
-    },
-    {
-      id: "0x89",
-      token: "MATIC",
-      label: "Matic Mainnet",
-      rpcUrl: "https://matic-mainnet.chainstacklabs.com",
-    },
-    {
-      id: "0x13881",
-      token: "MATIC",
-      label: "Matic Mumbai",
-      rpcUrl: "https://matic-mumbai.chainstacklabs.com",
-    },
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "@rainbow-me/rainbowkit/styles.css";
+import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
+const { chains, provider } = configureChains(
+  [
+    chain.polygon,
+    chain.polygonMumbai,
+    chain.optimismKovan,
+    chain.arbitrumRinkeby,
+    chain.goerli,
   ],
-  appMetadata: {
-    name: "one-click contract",
-    icon: "<svg><svg/>",
-    description: "Deploy a smart contract",
-    recommendedInjectedWallets: [
-      { name: "MetaMask", url: "https://metamask.io" },
-      { name: "Coinbase", url: "https://wallet.coinbase.com/" },
-    ],
-  },
+  [publicProvider()]
+);
+const { connectors } = getDefaultWallets({
+  appName: "NFT Factory",
+  chains,
+});
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
 });
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+  return (
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider chains={chains} coolMode>
+        <Component {...pageProps} />
+        <ToastContainer />
+      </RainbowKitProvider>
+    </WagmiConfig>
+  );
 }
 
 export default MyApp;
