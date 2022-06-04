@@ -6,9 +6,7 @@ import abi from "../ButtonCreateERC721/abi.json";
 import PendingTxModal from "../PendingTxModal";
 import ConfirmedTxModal from "../ConfirmedTxModal";
 import { getAddressLink } from "../../utils/etherscanService";
-import { useSigner } from "wagmi";
-import { useNetwork } from "wagmi";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork, useSigner } from "wagmi";
 
 const MintNFT = ({ contractAddress }) => {
   const { data: signer } = useSigner();
