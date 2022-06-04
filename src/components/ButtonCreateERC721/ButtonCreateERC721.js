@@ -5,6 +5,7 @@ import { ContractFactory, ethers } from "ethers";
 import abi from "./abi.json";
 import bytecode from "./bytecode.json";
 import PendingTxModal from "../PendingTxModal";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const ButtonCreateERC721 = ({ onDeployed, name, symbol }) => {
   const [{ wallet }, connect] = useConnectWallet();
@@ -54,6 +55,7 @@ const ButtonCreateERC721 = ({ onDeployed, name, symbol }) => {
           {wallet ? "Create Smart Contract" : "Connect Wallet"}
         </Button>
       )}
+      <ConnectButton />
       <PendingTxModal pendingTx={pendingTx} />
     </>
   );
