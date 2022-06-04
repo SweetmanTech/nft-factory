@@ -14,7 +14,6 @@ const MintNFT = ({ contractAddress }) => {
   const { data: signer } = useSigner();
   const { activeChain } = useNetwork();
   const { data: account } = useAccount();
-  console.log("useAccount", account);
   const [recipient, setRecipient] = useState(account?.address);
   const [tokenURI, setTokenURI] = useState(
     "ipfs://QmZMaWmwKCgmQLm6WUm7HXt9QNXgSzDKN7quFwnf4nv5QV"
