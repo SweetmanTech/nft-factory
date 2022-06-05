@@ -2,10 +2,10 @@
 
 ![demo](https://user-images.githubusercontent.com/23249402/172031776-84fbe00e-70de-4090-9be9-e7e21d8d5d1c.gif)
 
-
 - [Demo](https://nftfactory.vercel.app/).
 - one-click ERC721 smart contract deployment.
 - Networks: Polygon, Mumbai, Arbitrum Rinkeby, Optimism Kovan, Goerli.
+- Powered by: https://github.com/SweetmanTech/nft-factory-contract
 
 ## Safety
 
