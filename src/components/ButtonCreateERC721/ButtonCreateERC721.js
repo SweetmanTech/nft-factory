@@ -1,39 +1,39 @@
 import { useState } from "react";
 import { Button, CircularProgress } from "@mui/material";
-import { ContractFactory, ethers } from "ethers";
 import abi from "./abi.json";
-import bytecode from "./bytecode.json";
 import PendingTxModal from "../PendingTxModal";
-import { useSigner, useAccount } from "wagmi";
+import { useAccount, useContract, useNetwork, useSigner } from "wagmi";
 import { toast } from "react-toastify";
+import getFactoryAddress from "../../utils/getFactoryAddress";
 
 const ButtonCreateERC721 = ({ onDeployed, name, symbol }) => {
   const { data: signer } = useSigner();
   const { data: account } = useAccount();
+  const { activeChain } = useNetwork();
+  const contract = useContract({
+    addressOrName: getFactoryAddress(activeChain?.id),
+    contractInterface: abi,
+    signerOrProvider: signer,
+  });
+
   const [pendingTx, setPendingTx] = useState(false);
 
-  const deployContract = async () => {
+  const createAlbum = async () => {
     if (!account?.address) {
       toast.error("please connect wallet");
       return;
     }
     setPendingTx("Sign transaction deploying ERC721 smart contract.");
 
-    // Deploy the contract
-    const factory = new ContractFactory(abi, bytecode, signer);
-
-    const options = {
-      gasLimit: 3215060,
-    };
-    const contract = await factory.deploy(name, symbol, options);
+    const tx = await contract.createAlbum(name, symbol);
     setPendingTx("Deploying creator ERC721 contract.");
-    const receipt = await contract.deployed();
-    onDeployed?.(receipt.address);
+    const receipt = await tx.wait();
+    onDeployed?.(receipt?.events?.[0]?.args?._album);
   };
 
   const handleButtonClick = async () => {
     try {
-      await deployContract();
+      await createAlbum();
     } catch (err) {
       console.error(err);
     }

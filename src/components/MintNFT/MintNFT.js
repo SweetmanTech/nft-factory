@@ -1,12 +1,11 @@
 import { Button, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { ethers } from "ethers";
 import { useMemo, useState } from "react";
-import abi from "../ButtonCreateERC721/abi.json";
+import abi from "./abi.json";
 import PendingTxModal from "../PendingTxModal";
 import ConfirmedTxModal from "../ConfirmedTxModal";
 import { getAddressLink } from "../../utils/etherscanService";
-import { useAccount, useNetwork, useSigner } from "wagmi";
+import { useAccount, useContract, useNetwork, useSigner } from "wagmi";
 
 const MintNFT = ({ contractAddress }) => {
   const { data: signer } = useSigner();
@@ -18,14 +17,11 @@ const MintNFT = ({ contractAddress }) => {
   );
   const [tokenId, setTokenId] = useState();
   const [pendingTx, setPendingTx] = useState();
-
-  const contract = useMemo(
-    () =>
-      contractAddress
-        ? new ethers.Contract(contractAddress, abi, signer)
-        : false,
-    [contractAddress]
-  );
+  const contract = useContract({
+    addressOrName: contractAddress,
+    contractInterface: abi,
+    signerOrProvider: signer,
+  });
 
   const contractBlockscanAddress = useMemo(
     () => getAddressLink(activeChain, contractAddress),
@@ -44,7 +40,7 @@ const MintNFT = ({ contractAddress }) => {
 
   const mint = async () => {
     setPendingTx("Sign transaction to Mint your NFT.");
-    const tx = await contract.mint(recipient, tokenURI);
+    const tx = await contract.mint();
     setPendingTx("Minting NFT");
     const receipt = await tx.wait();
     handleReceipt(receipt);
@@ -73,18 +69,6 @@ const MintNFT = ({ contractAddress }) => {
         </a>
       </h3>
       <h1>Mint an NFT on your smart contract</h1>
-      <Box>
-        <TextField
-          label="NFT recipient"
-          value={recipient}
-          onChange={(e) => setRecipient(e.target.value)}
-        />
-        <TextField
-          label="tokenURI"
-          value={tokenURI}
-          onChange={(e) => setTokenURI(e.target.value)}
-        />
-      </Box>
 
       <Button onClick={mint}>Mint NFT</Button>
 
