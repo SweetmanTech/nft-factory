@@ -1,6 +1,7 @@
 # NFT Factory
 
-![MUMBAI_ERC721](https://user-images.githubusercontent.com/23249402/168454332-ee7e0fce-ee0a-4db0-a52d-bfaf1f21e200.gif)
+![demo](https://user-images.githubusercontent.com/23249402/172031776-84fbe00e-70de-4090-9be9-e7e21d8d5d1c.gif)
+
 
 - [Demo](https://nftfactory.vercel.app/).
 - one-click ERC721 smart contract deployment.
