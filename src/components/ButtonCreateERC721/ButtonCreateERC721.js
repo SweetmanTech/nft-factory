@@ -25,7 +25,7 @@ const ButtonCreateERC721 = ({ onDeployed, name, symbol }) => {
     }
     setPendingTx("Sign transaction deploying ERC721 smart contract.");
 
-    const tx = await contract.createAlbum(name, symbol);
+    const tx = await contract.createManifoldClone();
     setPendingTx("Deploying creator ERC721 contract.");
     const receipt = await tx.wait();
     onDeployed?.(receipt?.events?.[0]?.args?._album);

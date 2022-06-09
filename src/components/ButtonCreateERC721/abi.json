@@ -19,19 +19,8 @@
     "type": "event"
   },
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "name_",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "symbol_",
-        "type": "string"
-      }
-    ],
-    "name": "createAlbum",
+    "inputs": [],
+    "name": "createManifoldClone",
     "outputs": [
       {
         "internalType": "address",

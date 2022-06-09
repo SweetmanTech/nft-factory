@@ -4,9 +4,6 @@ import { useAccount } from "wagmi";
 import ButtonCreateERC721 from "../ButtonCreateERC721";
 
 const CreateERC721 = ({ onDeployed }) => {
-  const { data: account } = useAccount({
-    suspense: true,
-  });
   const [name, setName] = useState("My ERC721");
   const [symbol, setSymbol] = useState("SMBL");
   return (
