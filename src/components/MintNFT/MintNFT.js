@@ -7,7 +7,7 @@ import ConfirmedTxModal from "../ConfirmedTxModal";
 import { getAddressLink } from "../../utils/etherscanService";
 import { useAccount, useContract, useNetwork, useSigner } from "wagmi";
 
-const MintNFT = ({ contractAddress }) => {
+const MintNFT = ({ contractAddress, name, symbol }) => {
   const { data: signer } = useSigner();
   const { activeChain } = useNetwork();
   const { data: account } = useAccount();
@@ -22,6 +22,9 @@ const MintNFT = ({ contractAddress }) => {
     contractInterface: abi,
     signerOrProvider: signer,
   });
+
+  console.log("CONTRACt", contract);
+  console.log("ACCOUNT", account?.address);
 
   const contractBlockscanAddress = useMemo(
     () => getAddressLink(activeChain, contractAddress),
@@ -39,11 +42,30 @@ const MintNFT = ({ contractAddress }) => {
   };
 
   const mint = async () => {
-    setPendingTx("Sign transaction to Mint your NFT.");
-    const tx = await contract.mint();
-    setPendingTx("Minting NFT");
-    const receipt = await tx.wait();
-    handleReceipt(receipt);
+    contract
+      .initialize(name, symbol)
+      .then(async (tx) => {
+        setPendingTx("Naming your smart contract");
+        await tx.wait();
+        setPendingTx("Sign transaction to Mint your NFT.");
+        contract["mintBase(address,string)"](
+          "0xeCF12d2259a30B156Da670031D7a836626C3a89F",
+          "ipfs://QmaAAfkiTeXiJ2At9sA2SDUdYRPXsJwe5DUAwVQ4h35Z5v"
+        )
+          .then(async (tx) => {
+            setPendingTx("Minting NFT");
+            const receipt = await tx.wait();
+            handleReceipt(receipt);
+          })
+          .catch((e) => {
+            console.error(e);
+            setPendingTx(false);
+          });
+      })
+      .catch((e) => {
+        console.error(e);
+        setPendingTx(false);
+      });
   };
 
   return (
